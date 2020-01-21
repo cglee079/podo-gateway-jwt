@@ -1,0 +1,3 @@
+rootProject.name = 'podo-structure'
+
+include 'podo-gateway', 'podo-server', 'podo-auth'

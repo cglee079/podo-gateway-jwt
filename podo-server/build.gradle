@@ -1,0 +1,11 @@
+dependencies {
+	implementation group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.11.RELEASE'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
