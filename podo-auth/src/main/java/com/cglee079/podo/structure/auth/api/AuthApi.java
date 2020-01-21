@@ -17,7 +17,7 @@ public class AuthApi {
     public static final String HEADER_STRING = "Authorization";
 
     @GetMapping("/join/{user}/{password}")
-    public void join(@PathVariable String user, @PathVariable String password, HttpServletResponse response){
+    public void join(@PathVariable("user") String user, @PathVariable("password") String password, HttpServletResponse response){
 
         final String token = TokenAuthenticationService.addAuthentication(user + " / " + password);
         response.setHeader(HEADER_STRING, token);
