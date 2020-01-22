@@ -1,7 +1,8 @@
 package com.cglee079.podo.structure.auth.global.security.filter;
 
-import com.cglee079.podo.structure.auth.api.AuthApi;
+import com.cglee079.podo.structure.auth.domain.user.api.AuthApi;
 import com.cglee079.podo.structure.auth.global.security.TokenAuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -13,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Slf4j
 public class JWTAuthenticationFilter extends GenericFilterBean {
 
     @Override
@@ -21,8 +23,10 @@ public class JWTAuthenticationFilter extends GenericFilterBean {
                          FilterChain filterChain)
             throws IOException, ServletException {
 
-        final HttpServletRequest request1 = (HttpServletRequest) request;
-        Authentication authentication = TokenAuthenticationService.getAuthentication(request1.getHeader(AuthApi.HEADER_STRING));
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        final String authHeader = httpServletRequest.getHeader(AuthApi.HEADER_STRING);
+
+        final Authentication authentication = TokenAuthenticationService.authenticate(authHeader);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
