@@ -28,7 +28,7 @@ public class SecurityConfig {
         security.addFilterBefore(authFilter, SecurityWebFiltersOrder.HTTP_BASIC);
 
         security.authorizeExchange().pathMatchers(HttpMethod.POST, "/join/**").permitAll();
-        security.authorizeExchange().pathMatchers(HttpMethod.POST, "/auth/**").permitAll();
+        security.authorizeExchange().pathMatchers(HttpMethod.POST, "/login/**").permitAll();
         security.authorizeExchange().pathMatchers("/**").hasRole(Role.MEMBER.toString());
 
         return security.build();

@@ -12,12 +12,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @ToString
-public class TokenValue {
+public class JwtValue {
     private String id;
     private List<String> roles = new ArrayList<>();
     private String createTime;
 
-    public TokenValue(String id, LocalDateTime dateTime, List<String> roles) {
+    public JwtValue(String id, List<String> roles, LocalDateTime dateTime) {
         assert id != null;
         assert dateTime != null;
         assert roles != null;

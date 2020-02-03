@@ -1,4 +1,4 @@
-package com.cglee079.podo.structure.memberservice.infra.memberapi;
+package com.cglee079.podo.structure.memberservice.global.infra.memberapi;
 
 import com.cglee079.podo.structure.core.vo.MemberVo;
 import org.springframework.http.HttpEntity;

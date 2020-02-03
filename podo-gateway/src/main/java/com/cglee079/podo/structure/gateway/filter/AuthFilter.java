@@ -1,6 +1,6 @@
 package com.cglee079.podo.structure.gateway.filter;
 
-import com.cglee079.podo.structure.core.vo.TokenValue;
+import com.cglee079.podo.structure.core.vo.JwtValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -11,8 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -46,17 +44,17 @@ public class AuthFilter implements WebFilter {
         }
 
         final String authValue = authorizations.get(0);
-        final TokenValue tokenValue = readJson(authenticate(authValue));
+        final JwtValue JWTValue = readJson(authenticate(authValue));
 
-        if (Objects.isNull(tokenValue)) {
+        if (Objects.isNull(JWTValue)) {
             return chain.filter(exchange);
         }
 
-        final List<SimpleGrantedAuthority> roles = tokenValue.getRoles().stream()
+        final List<SimpleGrantedAuthority> roles = JWTValue.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(toList());
 
-        return chain.filter(exchange).subscriberContext(ReactiveSecurityContextHolder.withAuthentication(new UsernamePasswordAuthenticationToken(tokenValue, null, roles)));
+        return chain.filter(exchange).subscriberContext(ReactiveSecurityContextHolder.withAuthentication(new UsernamePasswordAuthenticationToken(JWTValue, null, roles)));
 
     }
 
@@ -73,9 +71,9 @@ public class AuthFilter implements WebFilter {
 
     }
 
-    private TokenValue readJson(String tokenValueJson) {
+    private JwtValue readJson(String tokenValueJson) {
         try {
-            return new ObjectMapper().readValue(tokenValueJson, TokenValue.class);
+            return new ObjectMapper().readValue(tokenValueJson, JwtValue.class);
         } catch (JsonProcessingException e) {
             log.error("", e);
             return null;

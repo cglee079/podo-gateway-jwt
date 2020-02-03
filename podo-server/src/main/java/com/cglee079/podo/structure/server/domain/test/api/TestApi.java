@@ -19,15 +19,15 @@ public class TestApi {
         final String servletPath = request.getServletPath();
         final String token = getToken(request.getHeader(AUTHORIZATION_HEADER_KEY));
 
-        final String response = String.format("Path : '%s', JWT Value : '%s'", servletPath, JwtUtil.getJwtBody(token));
+        final String response = String.format("Path : '%s', JWT Value : '%s'", servletPath, JwtUtil.getJwtValue(token));
 
         log.info("Get Request : " + response);
 
         return response;
     }
 
-    private String getToken(String header) {
-        return header.replace(TOKEN_PREFIX, "").trim();
+    private String getToken(String authorizationHeader) {
+        return authorizationHeader.replace(TOKEN_PREFIX, "").trim();
     }
 
 

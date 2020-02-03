@@ -20,4 +20,5 @@ public class MemberVo {
         this.name = name;
         this.roles = roles;
     }
+
 }

@@ -32,7 +32,7 @@ public class RouteConfig {
                         .order(-1)
                         .method(HttpMethod.POST)
                         .and()
-                        .path("/auth/**")
+                        .path("/login/**")
                         .uri("http://localhost:7070")
                         .id("auth")
                 )
