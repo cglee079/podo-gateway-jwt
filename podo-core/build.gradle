@@ -1,0 +1,5 @@
+dependencies {
+    compile group: 'org.json', name: 'json', version: '20190722'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+}
+

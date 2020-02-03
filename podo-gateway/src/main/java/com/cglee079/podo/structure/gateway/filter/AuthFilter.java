@@ -1,45 +1,85 @@
 package com.cglee079.podo.structure.gateway.filter;
 
-import lombok.Setter;
+import com.cglee079.podo.structure.core.vo.TokenValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.core.Ordered;
-import org.springframework.http.HttpEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Objects;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Component
-public class AuthFilter implements GatewayFilter{
+public class AuthFilter implements WebFilter {
 
-    private static final String AUTH_SERVER_URL = "http://localhost:7070/auth";
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    private static final String HEADER_STRING = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer";
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("Auth 필터를 실행합니다 ------- ");
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        log.info("사용자 인증을 수행합니다");
 
         final HttpHeaders headers = exchange.getRequest().getHeaders();
-        final HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-        final ResponseEntity<String> authResponse = new RestTemplate().exchange(AUTH_SERVER_URL, HttpMethod.POST, httpEntity, String.class);
+        final List<String> authorizations = headers.get(HEADER_STRING);
+        if (Objects.isNull(authorizations) || authorizations.isEmpty()) {
+            return chain.filter(exchange);
+        }
 
-        log.info("Response Code {}", authResponse.getStatusCode());
+        final String authValue = authorizations.get(0);
+        final TokenValue tokenValue = readJson(authenticate(authValue));
 
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(authResponse.getStatusCode());
+        if (Objects.isNull(tokenValue)) {
+            return chain.filter(exchange);
+        }
 
-        return chain.filter(exchange);
+        final List<SimpleGrantedAuthority> roles = tokenValue.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(toList());
 
+        return chain.filter(exchange).subscriberContext(ReactiveSecurityContextHolder.withAuthentication(new UsernamePasswordAuthenticationToken(tokenValue, null, roles)));
+
+    }
+
+    public String authenticate(String authHeaderValue) {
+        log.info("사용자 인증을 시작합니다, {}", authHeaderValue);
+
+        final String token = authHeaderValue.replace(TOKEN_PREFIX, "").trim();
+
+        return Jwts.parser()
+                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+
+    }
+
+    private TokenValue readJson(String tokenValueJson) {
+        try {
+            return new ObjectMapper().readValue(tokenValueJson, TokenValue.class);
+        } catch (JsonProcessingException e) {
+            log.error("", e);
+            return null;
+        }
     }
 
 }
