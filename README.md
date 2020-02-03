@@ -17,6 +17,7 @@ Gateway, 인증 서버 구현 데모
 - spring-cloud-gateway
 - spring-cloud-security
 - jwt validate
+- authorization, 보통 각 리소스 서버에서 진행하지만 gateway에서 진행 [관련영상](https://tv.kakao.com/channel/3150758/cliplink/391419714)
 
 ### podo-auth
 
