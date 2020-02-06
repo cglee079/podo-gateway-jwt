@@ -3,6 +3,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation group: 'org.apache.commons', name: 'commons-pool2', version: '2.8.0'
+
 
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.10.5'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.10.5'

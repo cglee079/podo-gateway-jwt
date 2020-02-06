@@ -1,23 +1,20 @@
-package com.cglee079.podo.structure.gateway.infra;
+package com.cglee079.podo.structure.gateway.security.store;
 
-import org.springframework.stereotype.Component;
+import com.cglee079.podo.structure.gateway.security.BlacklistStore;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-// Black List 관리 스토어
-// Redis?
-@Component
-public class BlacklistStore {
+public class InMemoryBlacklistStore implements BlacklistStore {
 
     private final Set<String> store = new HashSet<>();
 
+    @Override
     public void add(String accessToken){
         this.store.add(accessToken);
     }
 
+    @Override
     public boolean valid(String accessToken){
         return !this.store.contains(accessToken);
     }

@@ -1,6 +1,6 @@
 package com.cglee079.podo.structure.gateway.route.filter;
 
-import com.cglee079.podo.structure.gateway.infra.BlacklistStore;
+import com.cglee079.podo.structure.gateway.security.BlacklistStore;
 import com.cglee079.podo.structure.gateway.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;

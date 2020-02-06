@@ -3,9 +3,12 @@ package com.cglee079.podo.structure.gateway.security;
 import com.cglee079.podo.structure.core.vo.Role;
 import com.cglee079.podo.structure.gateway.security.filter.AuthFilter;
 import com.cglee079.podo.structure.gateway.security.filter.BlacklistFilter;
+import com.cglee079.podo.structure.gateway.security.store.InMemoryBlacklistStore;
+import com.cglee079.podo.structure.gateway.security.store.RedisBlacklistStore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -28,8 +31,8 @@ public class SecurityConfig {
         security.httpBasic().disable();
         security.formLogin().disable();
 
-        security.addFilterBefore(blacklistFilter, SecurityWebFiltersOrder.HTTP_BASIC);
-        security.addFilterBefore(authFilter, SecurityWebFiltersOrder.HTTP_BASIC);
+        security.addFilterBefore(blacklistFilter, SecurityWebFiltersOrder.CORS);
+        security.addFilterBefore(authFilter, SecurityWebFiltersOrder.CORS);
 
         security.authorizeExchange().pathMatchers("/join").permitAll();
         security.authorizeExchange().pathMatchers("/login").permitAll();

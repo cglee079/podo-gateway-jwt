@@ -5,6 +5,7 @@ jwt:
   secret: ABCDEFGHIJKDKJFKLDJFKLSJDKLFJSKLDJFKLSJDFKLJSDKLFJKLDKLFJSKLDJFLKSJDFJSKLDJFKLJSDLKFJKLSD
   access_token.expire : 100000
   refresh_token.expire : 10000000
+
 spring:
   redis:
     lettuce:
