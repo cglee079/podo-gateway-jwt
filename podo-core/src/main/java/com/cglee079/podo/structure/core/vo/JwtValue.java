@@ -13,16 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class JwtValue {
-    private String id;
     private List<String> roles = new ArrayList<>();
     private String createTime;
 
-    public JwtValue(String id, List<String> roles, LocalDateTime dateTime) {
-        assert id != null;
+    public JwtValue(List<String> roles, LocalDateTime dateTime) {
         assert dateTime != null;
         assert roles != null;
 
-        this.id = id;
         this.roles.addAll(roles);
         this.createTime = dateTime.toString();
     }

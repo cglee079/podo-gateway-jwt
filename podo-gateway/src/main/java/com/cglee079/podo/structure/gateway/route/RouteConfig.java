@@ -1,13 +1,17 @@
 package com.cglee079.podo.structure.gateway.route;
 
-import com.cglee079.podo.structure.gateway.filter.AuthFilter;
+import com.cglee079.podo.structure.gateway.route.filter.BlackListSaveFilter;
+import com.cglee079.podo.structure.gateway.security.filter.AuthFilter;
+import com.cglee079.podo.structure.gateway.security.filter.BlacklistFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 
 @Configuration
+@RequiredArgsConstructor
 public class RouteConfig {
 
     @Bean
@@ -15,36 +19,20 @@ public class RouteConfig {
         return builder.routes()
                 .route(r -> r
                         .order(-1)
-                        .method(HttpMethod.POST)
-                        .and()
-                        .path("/join/**")
+                        .path("/join")
                         .uri("http://localhost:6061")
-                        .id("join")
+                        .id("external-member")
                 )
                 .build();
     }
 
-
-    @Bean
-    public RouteLocator loginRoute(RouteLocatorBuilder builder) {
-        return builder.routes()
-                .route(r -> r
-                        .order(-1)
-                        .method(HttpMethod.POST)
-                        .and()
-                        .path("/login/**")
-                        .uri("http://localhost:7070")
-                        .id("auth")
-                )
-                .build();
-    }
 
     @Bean
     public RouteLocator serverRoute(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route(r -> r.path("/**")
+                .route(r -> r.path("/api/**")
                         .uri("http://localhost:8080")
-                        .id("podo-server")
+                        .id("resource-server")
                 )
                 .build();
     }
